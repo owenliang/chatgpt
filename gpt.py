@@ -3,11 +3,11 @@ import torch
 from emb import EmbeddingWithPosition
 
 class GPT(nn.Module):
-    def __init__(self,d_model,nhead,feedforward,vocab_size):
+    def __init__(self,d_model,nhead,feedforward,vocab_size,seq_max_len):
         super().__init__()
         
         # positional encoding...
-        self.emb=EmbeddingWithPosition(vocab_size=vocab_size,dim=d_model)
+        self.emb=EmbeddingWithPosition(vocab_size=vocab_size,dim=d_model,seq_max_len=seq_max_len)
         
         # decoder-only transformer (self-attention)
         self.dec_blocks=nn.ModuleList([
@@ -39,6 +39,7 @@ if __name__=='__main__':
     padding=torch.zeros(5,30)
     
     # GPT模型
-    gpt=GPT(d_model=64,nhead=2,feedforward=128,vocab_size=tokenizer.vocab_size())
+    from config import MAX_SEQ_LEN
+    gpt=GPT(d_model=64,nhead=2,feedforward=128,vocab_size=tokenizer.vocab_size(),seq_max_len=MAX_SEQ_LEN)
     y=gpt(x,padding)
     print(y.shape)

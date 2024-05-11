@@ -21,6 +21,8 @@ class WebQADataset(Dataset):
                         continue
                     chatml=f"{IM_START}system\n你是聪明的个人助理\n{IM_END}\n{IM_START}user\n{row['title']}\n{IM_END}\n{IM_START}assitant\n{row['content']}\n{IM_END}{EOF}"
                     ids,tokens=self.tokenizer.encode(chatml)
+                    if len(ids)>MAX_SEQ_LEN:
+                        continue
                     self.data.append((ids,chatml))
                 except:
                     continue 

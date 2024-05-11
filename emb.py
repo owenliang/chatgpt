@@ -3,7 +3,7 @@ import torch
 import math 
 
 class EmbeddingWithPosition(nn.Module):
-    def __init__(self,vocab_size,dim,seq_max_len=5000):
+    def __init__(self,vocab_size,dim,seq_max_len):
         super().__init__()
         
         self.seq_emb=nn.Embedding(vocab_size,dim)
