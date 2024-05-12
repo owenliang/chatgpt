@@ -17,7 +17,7 @@ class WebQADataset(Dataset):
             for line in fp:
                 try:
                     row=json.loads(line.strip())
-                    if row['star']<STAR_THERSHOLD: # 保留高质量数据
+                    if row['star']<GPT_STAR_THERSHOLD: # 保留高质量数据
                         continue
                     chatml=f"{IM_START}system\n你是聪明的个人助理\n{IM_END}\n{IM_START}user\n{row['title']}\n{IM_END}\n{IM_START}assitant\n{row['content']}\n{IM_END}"
                     ids,tokens=self.tokenizer.encode(chatml)

@@ -1,4 +1,6 @@
-STAR_THERSHOLD=1000 # 保留点赞高的数据
+BPE_STAR_THERSHOLD=1000 
+GPT_STAR_THERSHOLD=200 
+
 VOCAB_SIZE=30000    # 词表大小
 MAX_SEQ_LEN=2000     # 最长输入token
 
@@ -9,7 +11,7 @@ GPT_FF=256
 GPT_BLOCKS=10
 
 # training
-BATCH_SIZE=50
+BATCH_SIZE=25
 
 # chatml 
 IM_START='<|im_start|>' 

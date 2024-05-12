@@ -15,7 +15,7 @@ with open('dataset/web_text_zh_train.json','r') as fp:
     for line in fp:
         try:
             row=json.loads(line.strip())
-            if row['star']<STAR_THERSHOLD:  # bpe实在太慢，数据太多练不动，只保留少量优质回答做分词训练
+            if row['star']<BPE_STAR_THERSHOLD:  # bpe实在太慢，数据太多练不动，只保留少量优质回答做分词训练
                 continue
             text_list.append(row['title'])
             text_list.append(row['content'])
