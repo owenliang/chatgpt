@@ -19,9 +19,9 @@ class WebQADataset(Dataset):
                     row=json.loads(line.strip())
                     if row['star']<STAR_THERSHOLD: # 保留高质量数据
                         continue
-                    chatml=f"{IM_START}system\n你是聪明的个人助理\n{IM_END}\n{IM_START}user\n{row['title']}\n{IM_END}\n{IM_START}assitant\n{row['content']}\n{IM_END}{EOF}"
+                    chatml=f"{IM_START}system\n你是聪明的个人助理\n{IM_END}\n{IM_START}user\n{row['title']}\n{IM_END}\n{IM_START}assitant\n{row['content']}\n{IM_END}"
                     ids,tokens=self.tokenizer.encode(chatml)
-                    if len(ids)>MAX_SEQ_LEN:
+                    if len(ids)>MAX_SEQ_LEN-2:  # 留出BOS和EOS的token
                         continue
                     self.data.append((ids,chatml))
                 except:

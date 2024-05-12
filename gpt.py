@@ -18,7 +18,7 @@ class GPT(nn.Module):
     
     def forward(self,x,padding_mask): # x:(batch,seq)
         # 注意力遮挡
-        src_mask=torch.triu(torch.ones(x.size()[1],x.size()[1]),diagonal=1)
+        src_mask=torch.triu(torch.ones(x.size()[1],x.size()[1]),diagonal=1).type(torch.bool).to(x.device)
         # embedding
         x=self.emb(x)
         # decoder
