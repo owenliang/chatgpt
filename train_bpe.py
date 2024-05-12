@@ -1,5 +1,5 @@
 from bpe import BPETokenizer
-from config import VOCAB_SIZE,STAR_THERSHOLD
+from config import *
 import json 
 import os
 import sys 
@@ -27,5 +27,5 @@ print('共加载%d条数据'%sample_count)
 # 训练词表
 tokenizer=BPETokenizer()  
 tokenizer.train(text_list,VOCAB_SIZE)
-tokenizer.add_special_tokens(['<|im_start|>','<|im_end|>','<|endoftext|>','<|padding|>'])
+tokenizer.add_special_tokens([IM_START,IM_END,BOS,EOS,PAD])
 tokenizer.save('tokenizer.bin')

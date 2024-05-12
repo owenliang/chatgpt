@@ -1,6 +1,7 @@
 from torch import nn
 import torch 
 from emb import EmbeddingWithPosition
+from config import GPT_BLOCKS
 
 class GPT(nn.Module):
     def __init__(self,d_model,nhead,feedforward,vocab_size,seq_max_len):
@@ -11,7 +12,7 @@ class GPT(nn.Module):
         
         # decoder-only transformer (self-attention)
         self.dec_blocks=nn.ModuleList([
-            nn.TransformerEncoderLayer(d_model=d_model,nhead=nhead,dim_feedforward=feedforward,batch_first=True) for _ in range(5)
+            nn.TransformerEncoderLayer(d_model=d_model,nhead=nhead,dim_feedforward=feedforward,batch_first=True) for _ in range(GPT_BLOCKS)
         ])
         # next token probability
         self.prob_linear=nn.Linear(d_model,vocab_size)

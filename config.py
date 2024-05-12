@@ -6,9 +6,10 @@ MAX_SEQ_LEN=2000     # 最长输入token
 GPT_DIM=128
 GPT_HEAD=4
 GPT_FF=256
+GPT_BLOCKS=10
 
 # training
-BATCH_SIZE=5
+BATCH_SIZE=50
 
 # chatml 
 IM_START='<|im_start|>' 

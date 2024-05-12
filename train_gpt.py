@@ -55,7 +55,9 @@ dataloader=DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=True,num_workers=10,
     训练模型
 '''
 
-EPOCH=1000
+pad_ids,_=tokenizer.encode(PAD)
+
+EPOCH=500
 
 iter_count=0
 for epoch in range(EPOCH):
@@ -67,7 +69,7 @@ for epoch in range(EPOCH):
         
         probs=logtis[:,:-1,:]   # (batch,seq-1,vocab)
         targets=batch_ids[:,1:] # (batch,seq-1)
-        loss=F.cross_entropy(probs.reshape(-1,probs.size(2)),targets.reshape(-1))
+        loss=F.cross_entropy(probs.reshape(-1,probs.size(2)),targets.reshape(-1),ignore_index=pad_ids[0])
 
         optimzer.zero_grad()
         loss.backward()
