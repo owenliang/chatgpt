@@ -1,8 +1,5 @@
-BPE_STAR_THERSHOLD=1000 
-GPT_STAR_THERSHOLD=200 
-
 VOCAB_SIZE=30000    # 词表大小
-MAX_SEQ_LEN=2000     # 最长输入token
+MAX_SEQ_LEN=2000     # GPT模型输入限制
 
 # transformer
 GPT_DIM=384
