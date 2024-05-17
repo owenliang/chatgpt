@@ -1,6 +1,6 @@
 # chatgpt
 
-simple decoder-only chat model in pytorch
+simple decoder-only GTP model in pytorch
 
 ## 依赖
 
