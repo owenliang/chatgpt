@@ -1,31 +1,30 @@
 from torch.utils.data import Dataset
-from bpe import BPETokenizer
+from tokenizer import BPETokenizer
 from config import *
 import json 
+from tqdm import tqdm
 
-# 问答数据集
-class WebQADataset(Dataset):
+# 数据集
+class NalanDataset(Dataset):
     def __init__(self):
         super().__init__()
-        self.tokenizer=BPETokenizer()
-        self.tokenizer.load('tokenizer.bin')
-        self._build_train_data()
+        with open('纳兰性德诗集.json','r') as fp:
+            self.raw_ds=json.loads(fp.read())
     
-    def _build_train_data(self):
+    def build_train_data(self):
+        tokenizer=BPETokenizer()
+        tokenizer.load('tokenizer.bin')
+        
         self.data=[]
-        with open('dataset/web_text_zh_train.json','r') as fp:
-            for line in fp:
-                try:
-                    row=json.loads(line.strip())
-                    if row['star']<GPT_STAR_THERSHOLD: # 保留高质量数据
-                        continue
-                    chatml=f"{IM_START}system\n你是聪明的个人助理\n{IM_END}\n{IM_START}user\n{row['title']}\n{IM_END}\n{IM_START}assitant\n{row['content']}\n{IM_END}"
-                    ids,tokens=self.tokenizer.encode(chatml)
-                    if len(ids)>MAX_SEQ_LEN-2:  # 留出BOS和EOS的token
-                        continue
-                    self.data.append((ids,chatml))
-                except:
-                    continue 
+        for sample in tqdm(self.raw_ds,desc='building dataset'):
+            try:
+                text='\n'.join(sample['para'])
+                ids,_=tokenizer.encode(text)
+                if len(ids)>MAX_SEQ_LEN-2:  # 留出BOS和EOS的token
+                    continue
+                self.data.append((ids,text))
+            except:
+                continue
     
     def __len__(self):
         return len(self.data)

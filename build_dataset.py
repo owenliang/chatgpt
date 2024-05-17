@@ -1,4 +1,4 @@
-from dataset import WebQADataset
+from dataset import NalanDataset
 import pickle
 import os 
 import sys 
@@ -13,13 +13,13 @@ def load_dataset():
 if __name__=='__main__':
     if os.path.exists(filename):
         ds=load_dataset()
-        print(f'{filename}已存在')
-        print('训练集大小:',len(ds))
-        ids,chatml=ds[5]
-        print(ids,chatml)
+        print(f'{filename}已存在，训练集大小：{len(ds)}，样例数据如下：')
+        ids,text=ds[5]
+        print(ids,text)
         sys.exit(0)
 
-    ds=WebQADataset()
+    ds=NalanDataset()
     with open(filename,'wb') as fp:
+        ds.build_train_data()
         pickle.dump(ds,fp)
     print('dataset.bin已生成')

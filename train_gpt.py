@@ -3,27 +3,37 @@ from build_dataset import load_dataset
 from gpt import GPT
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import os
 from config import *
-from bpe import BPETokenizer
+from tokenizer import BPETokenizer
+from tqdm import tqdm
+import os 
 
-DEVICE='cuda' if torch.cuda.is_available() else 'cpu'   # 设备
+# device
+DEVICE='cuda' if torch.cuda.is_available() else 'cpu'   
 
-dataset=load_dataset() # 数据集
+# dataset
+dataset=load_dataset() 
 print('训练集大小:',len(dataset))
 
-tokenizer=BPETokenizer()  # 分词器
+# tokenizer
+tokenizer=BPETokenizer()
 tokenizer.load('tokenizer.bin')
-tokenizer.add_special_tokens([IM_START,IM_END,BOS,EOS,PAD])
+pad_ids,_=tokenizer.encode(PAD)
 
+# load model
 model=GPT(d_model=GPT_DIM,nhead=GPT_HEAD,feedforward=GPT_FF,vocab_size=tokenizer.vocab_size(),seq_max_len=MAX_SEQ_LEN).to(DEVICE) # 模型
-try:    # 加载模型
-    model.load_state_dict(torch.load('model.pth'))
+# optimizer
+optimizer=torch.optim.SGD(model.parameters(),lr=1e-3,momentum=0.99)
+
+# recovery
+try:
+    checkpoint=torch.load('checkpoint.bin')
+    model.load_state_dict(checkpoint['model'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
+    print(checkpoint)
 except:
-    pass 
-
-optimzer=torch.optim.Adam(model.parameters(),lr=1e-3)   # 优化器
-
+    checkpoint={'iter':0}
+ 
 def batch_proc(batch):
     bos_ids,_=tokenizer.encode(BOS)
     eos_ids,_=tokenizer.encode(EOS)
@@ -48,34 +58,31 @@ def batch_proc(batch):
     # padding mask
     batch_padding_mask=(batch_x==pad_ids[0])
     return batch_x,batch_padding_mask,batch_chatml
+
+dataloader=DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=True,num_workers=8,persistent_workers=True,collate_fn=batch_proc)
+
+ITER_COUNT=10000
+pbar=tqdm(total=ITER_COUNT,initial=checkpoint['iter'],postfix={'loss'})
+for i in range(checkpoint['iter'],ITER_COUNT):
+    batch_ids,batch_padding_mask,batch_chatml=next(iter(dataloader))
+
+    batch_ids=batch_ids.to(DEVICE)
+    batch_padding_mask=batch_padding_mask.to(DEVICE)
     
-dataloader=DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=True,num_workers=10,persistent_workers=True,collate_fn=batch_proc)    # 数据加载器
+    logtis=model(batch_ids,batch_padding_mask)  # (batch,seq,vocab)
+    
+    probs=logtis[:,:-1,:]   # (batch,seq-1,vocab)
+    targets=batch_ids[:,1:] # (batch,seq-1)
+    loss=F.cross_entropy(probs.reshape(-1,probs.size(2)),targets.reshape(-1),ignore_index=pad_ids[0])
 
-'''
-    训练模型
-'''
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    
+    pbar.update(1)
+    pbar.set_postfix({'loss':loss.item()})
 
-pad_ids,_=tokenizer.encode(PAD)
-
-EPOCH=500
-
-iter_count=0
-for epoch in range(EPOCH):
-    for batch_ids,batch_padding_mask,batch_chatml in dataloader:
-        batch_ids=batch_ids.to(DEVICE)
-        batch_padding_mask=batch_padding_mask.to(DEVICE)
-        
-        logtis=model(batch_ids,batch_padding_mask)  # (batch,seq,vocab)
-        
-        probs=logtis[:,:-1,:]   # (batch,seq-1,vocab)
-        targets=batch_ids[:,1:] # (batch,seq-1)
-        loss=F.cross_entropy(probs.reshape(-1,probs.size(2)),targets.reshape(-1),ignore_index=pad_ids[0])
-
-        optimzer.zero_grad()
-        loss.backward()
-        optimzer.step()
-        if iter_count%1000==0:
-            print('epoch:{} iter:{},loss:{}'.format(epoch,iter_count,loss))
-            torch.save(model.state_dict(),'.model.pth')
-            os.replace('.model.pth','model.pth')
-        iter_count+=1
+    if i%1000==0:
+        checkpoint={'iter':i,'model':model.state_dict(),'optimizer':optimizer.state_dict()}
+        torch.save(checkpoint,'checkpoint.bin.tmp')
+        os.replace('checkpoint.bin.tmp','checkpoint.bin')

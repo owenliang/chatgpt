@@ -31,7 +31,7 @@ class GPT(nn.Module):
 
 if __name__=='__main__':
     # 分词器
-    from bpe import BPETokenizer
+    from tokenizer import BPETokenizer
     tokenizer=BPETokenizer()
     tokenizer.load('tokenizer.bin')
     
