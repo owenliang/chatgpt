@@ -61,9 +61,8 @@ def batch_proc(batch):
 
 dataloader=DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=True,num_workers=8,persistent_workers=True,collate_fn=batch_proc)
 
-ITER_COUNT=10000
-pbar=tqdm(total=ITER_COUNT,initial=checkpoint['iter'],postfix={'loss'})
-for i in range(checkpoint['iter'],ITER_COUNT):
+pbar=tqdm(total=TRAIN_ITER,initial=checkpoint['iter'],postfix={'loss'})
+for i in range(checkpoint['iter'],TRAIN_ITER):
     batch_ids,batch_padding_mask,batch_chatml=next(iter(dataloader))
 
     batch_ids=batch_ids.to(DEVICE)

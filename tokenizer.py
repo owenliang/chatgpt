@@ -49,7 +49,7 @@ class BPETokenizer:
             tokens_list.append(tokens)
         
         # 进度条
-        progress=tqdm(total=vocab_size-256)
+        progress=tqdm(total=vocab_size,initial=256)
         
         while True:
             # 词表足够大了，退出训练

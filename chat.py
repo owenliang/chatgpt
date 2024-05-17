@@ -28,8 +28,6 @@ pad_ids,_=tokenizer.encode(PAD)
 
 def chat(query):
     global tokenizer,model
-    
-    resp_ids=[] # assitant回答
 
     prompt=f"{BOS}{query}"
     ids,_=tokenizer.encode(prompt) 
@@ -56,9 +54,8 @@ def chat(query):
 
         if next_id in eos_ids+pad_ids:
             break
-        resp_ids.append(next_id)
         ids=ids+[next_id]
-    return tokenizer.decode(resp_ids)
+    return tokenizer.decode(ids[1:])
         
     
 if __name__=='__main__':

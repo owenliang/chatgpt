@@ -1,4 +1,4 @@
-VOCAB_SIZE=30000    # 词表大小
+VOCAB_SIZE=500    # 词表大小
 MAX_SEQ_LEN=2000     # GPT模型输入限制
 
 # transformer
@@ -8,7 +8,8 @@ GPT_FF=1024
 GPT_BLOCKS=6
 
 # training
-BATCH_SIZE=200
+TRAIN_ITER=5000
+BATCH_SIZE=50
 
 # inference
 TEMPERATURE=1.2
