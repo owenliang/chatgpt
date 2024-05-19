@@ -2,10 +2,12 @@
 
 simple decoder-only GTP model in pytorch
 
+![](decoder-only.png)
+
 ## 依赖
 
 ```
-pip install tqdm torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 -i https://mirrors.aliyun.com/pypi/simple/
+pip install tqdm torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cu118  -i https://mirrors.aliyun.com/pypi/simple/
 ```
 
 ## 训练
@@ -33,7 +35,7 @@ python train_gpt.py
 # 推理
 
 ```
-python chat.py
+python generate.py
 >山色江声共寂寥
 < 山色江声共寂寥，十三陵树晚萧萧
 中原事业如江左，芳草何须怨六朝
