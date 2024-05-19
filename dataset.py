@@ -8,7 +8,7 @@ from tqdm import tqdm
 class NalanDataset(Dataset):
     def __init__(self):
         super().__init__()
-        with open('纳兰性德诗集.json','r') as fp:
+        with open('纳兰性德诗集.json','r',encoding='utf-8') as fp:
             self.raw_ds=json.loads(fp.read())
     
     def build_train_data(self):
