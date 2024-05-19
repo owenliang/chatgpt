@@ -19,10 +19,11 @@ class NalanDataset(Dataset):
         for sample in tqdm(self.raw_ds,desc='building dataset'):
             try:
                 text='\n'.join(sample['para'])
-                ids,_=tokenizer.encode(text)
+                inputs=f'{IM_START}user\n{sample["title"]}\n{IM_END}\n{IM_START}assistant\n{text}\n{IM_END}' if GPT_MODE=='chat' else f'{text}'
+                ids,_=tokenizer.encode(inputs)
                 if len(ids)>MAX_SEQ_LEN-2:  # 留出BOS和EOS的token
                     continue
-                self.data.append((ids,text))
+                self.data.append((ids,inputs))
             except:
                 continue
     

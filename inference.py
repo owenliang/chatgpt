@@ -25,12 +25,13 @@ model.eval()
 # 可能的结束符
 eos_ids,_=tokenizer.encode(EOS)
 pad_ids,_=tokenizer.encode(PAD)
+im_end_ids,_=tokenizer.encode(IM_END)
 
 def chat(query):
     global tokenizer,model
 
-    prompt=f"{BOS}{query}"
-    ids,_=tokenizer.encode(prompt) 
+    inputs=f'{BOS}{IM_START}user\n{query}\n{IM_END}\n{IM_START}assistant\n' if GPT_MODE=='chat' else f'{BOS}{query}'
+    ids,_=tokenizer.encode(inputs)
     
     while len(ids)<MAX_SEQ_LEN:
         batch_ids=torch.tensor([ids],dtype=torch.long).to(DEVICE)
@@ -52,7 +53,7 @@ def chat(query):
                     break
                 cumsum+=topk_probs[i]
 
-        if next_id in eos_ids+pad_ids:
+        if next_id in eos_ids+pad_ids+im_end_ids:
             break
         ids=ids+[next_id]
     return tokenizer.decode(ids[1:])

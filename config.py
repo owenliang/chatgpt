@@ -15,10 +15,12 @@ BATCH_SIZE=50
 TEMPERATURE=1.2
 TOP_K=20
 
-# chatml 
-SEP='<|sep|>'
-# sequence begin & end
+# special tokens
 BOS='<|beginoftext|>'
 EOS='<|endoftext|>'
-# padding
 PAD='<|padding|>'
+IM_START='<|im_start|>'
+IM_END='<|im_end|>'
+
+# chat or generate
+GPT_MODE='generate'

@@ -15,6 +15,7 @@ with open('纳兰性德诗集.json','r',encoding='utf-8') as fp:
 text_list=[]
 sample_count=0
 for sample in ds:
+    text_list.append(sample['title'])
     for p in sample['para']: 
         text_list.append(p)
     sample_count+=1
@@ -23,5 +24,5 @@ print('共加载%d条数据'%sample_count)
 # 训练词表
 tokenizer=BPETokenizer()  
 tokenizer.train(text_list,VOCAB_SIZE)
-tokenizer.add_special_tokens([BOS,EOS,PAD])
+tokenizer.add_special_tokens([IM_START,IM_END,BOS,EOS,PAD])
 tokenizer.save('tokenizer.bin')
